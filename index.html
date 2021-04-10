@@ -14,7 +14,48 @@
     <title>Document</title>
   </head>
   <body>
-    <main></main>
+    <main>
+      <div class="grid-y medium-grid-frame">
+        <div class="cell shrink header medium-cell-block">
+          <h3>Weather Dashboard</h3>
+        </div>
+        <div class="grid-x grid-padding-x">
+          <div
+            class="cell small-12 medium-3 large-4 grid-marging-x expanded"
+            id="search-city-body"
+          >
+            <span class="search-city-text">Search for a City:</span>
+            <input class="input-city" />
+            <button class="button expanded" type="button">Submit</button>
+          </div>
+          <div class="cell small-12 medium-9 large-8 grid-marging-x">
+            <div
+              class="cell grid-y small-12 medium-9 large-8 grid-padding-x"
+              id="present-weather-info"
+            >
+              <h4 id="city-name">Madison</h4>
+              <span id="city-temp">Temp: </span>
+              <span id="city-wind">Wind: </span>
+              <span id="city-humidity">Humidity: </span>
+              <span id="city-uv-index">UV Index: </span>
+            </div>
+            <div
+              class="cell small-12 medium-9 large-8 grid-padding-x"
+              id="future-weather-info"
+            >
+              <span id="future-weather-text">5-Day Forecast</span>
+              <div class="cell grid-x small-up-3 medium-up-5">
+                <div class="card">stuf</div>
+                <div class="card">stuf</div>
+                <div class="card">stuf</div>
+                <div class="card">stuf</div>
+                <div class="card">stuf</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
 
     <script
       src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"

@@ -1,0 +1,27 @@
+h3 {
+  text-align: center;
+  color: white;
+  background-color: blue;
+  margin: 20px;
+  font-weight: 900;
+}
+
+.search-city-text {
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.input-city {
+  margin: 10px 0;
+  height: 2rem;
+  width: 100%;
+}
+
+#present-weather-info {
+  border: 1px solid black;
+  padding: 25px 5px;
+}
+
+#future-weather-text {
+  font-weight: 600;
+}
