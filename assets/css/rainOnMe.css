@@ -24,9 +24,17 @@ h3 {
   width: 100%;
 }
 
+#city-name {
+  font-weight: 900;
+}
+
 #present-weather-info {
   border: 1px solid black;
-  padding: 25px 5px;
+  padding: 8px 5px;
+}
+
+#present-weather-info span {
+  margin: 5px 5px;
 }
 
 #future-weather-text {
@@ -42,4 +50,30 @@ h3 {
 
 .card span {
   margin: 5px 5px;
+  font-size: 0.9rem;
+}
+
+.weatherImg {
+  height: 50px;
+  width: 50px;
+}
+
+.uvIndex {
+  border: 1px solid black;
+  color: white;
+  font-weight: 500;
+  padding: 0 15px;
+  border-radius: 5px;
+}
+
+.favorable {
+  background-color: green;
+}
+
+.moderate {
+  background-color: orange;
+}
+
+.severe {
+  background-color: red;
 }
