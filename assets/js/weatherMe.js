@@ -1,17 +1,67 @@
+var savedCities = JSON.parse(localStorage.getItem("cities"));
+var searchedCities = savedCities ? [savedCities] : [];
+var searchCityBodyEl = $("#search-city-body");
+var searchedCityButtonDivEl = $(".searched-cities");
+
+$(document).ready(function () {
+  if (searchedCities) {
+    for (var i = 1; i < searchedCities[0].length; i++) {
+      var buttonEl = $("<button>")
+        .text(searchedCities[0][i].city)
+        .addClass("city button");
+
+      searchedCityButtonDivEl.append(buttonEl);
+      searchCityBodyEl.append(searchedCityButtonDivEl);
+    }
+  }
+});
+
+searchedCityButtonDivEl.on("click", "button", function () {
+  var cityName = $(this).html();
+  console.log(cityName);
+});
+
 $("#submitBtn").click(function () {
+  var inputCityEl = $(".input-city").val();
+  if (inputCityEl !== "") {
+    //check and see if that city has already been searched for
+    checkCity(inputCityEl);
+  }
+});
+
+function checkCity(inputCityEl) {
   $("#present-weather-info").html("");
   $("#future-weather-container").html("");
-  var searchCityBodyEl = $("#search-city-body");
-  var inputCityEl = $(".input-city").val();
+  var buttonEl = $("<button>").text(inputCityEl).addClass("city button");
 
-  if (inputCityEl !== "") {
-    var spanEl = $("<button>").text(inputCityEl).addClass("city button");
-    searchCityBodyEl.append(spanEl);
+  inputCityEl = inputCityEl.toLowerCase();
+  var bool = false;
+  var i = 0;
+
+  if (searchedCities.length === 0) {
     fetchMe(inputCityEl);
+    searchedCityButtonDivEl.append(buttonEl);
+    searchCityBodyEl.append(searchedCityButtonDivEl);
+  } else {
+    searchedCities.forEach((element, index) => {
+      if (inputCityEl == element.city) {
+        // if the city is in the array it means that it was already searched; so set bool to true
+        i = index;
+        bool = true;
+      }
+    });
+    if (bool) {
+      getCurrentWeatherData(searchedCities[i].city, searchedCities[i].data);
+      getFutureWeatherData(searchedCities[i].data, 5);
+      bool = false;
+      i = 0;
+    } else {
+      fetchMe(inputCityEl);
+      searchedCityButtonDivEl.append(buttonEl);
+      searchCityBodyEl.append(searchedCityButtonDivEl);
+    }
   }
-
-  console.log(inputCityEl);
-});
+}
 
 function getCurrentWeatherData(city, obj) {
   var temp = obj.current.temp;
@@ -63,6 +113,7 @@ function displayCurrentWeather(city, weather) {
   var date = dayjs().format("DD/MM/YYYY");
 
   var currentWeatherEl = $("#present-weather-info");
+  currentWeatherEl.html("");
   var cityImgDivEl = $("<div>").addClass("grid-x");
 
   var iconEl = $("<img>")
@@ -73,7 +124,9 @@ function displayCurrentWeather(city, weather) {
     )
     .attr("alt", "Weather Icon");
 
-  var cityNameEl = $("<h4>").attr("id", "city-name").html(`${city} (${date})`);
+  var cityNameEl = $("<h4>")
+    .attr("id", "city-name")
+    .html(`${city.toUpperCase()} (${date})`);
 
   cityImgDivEl.append(cityNameEl, iconEl);
 
@@ -99,6 +152,7 @@ function displayCurrentWeather(city, weather) {
 }
 
 function displayFutureWeather(futureWeather) {
+  $("#future-weather-container").html("");
   for (var i = 0; i < futureWeather.length; i++) {
     var futureWeatherEl = $("#future-weather-container");
     var divEl = $("<div>").addClass("card medium-2 small-2 large-2");
@@ -122,13 +176,9 @@ function displayFutureWeather(futureWeather) {
   }
 }
 
-var searchedCities = [];
-
-function saveCity(city) {}
-
 function fetchMe(city) {
   fetch(
-    `https:api.openweathermap.org/data/2.5/weather?q=${city}&units=imperial&appid=b25905e67fcd36d2919f537ee580bedb`
+    `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=imperial&appid=b25905e67fcd36d2919f537ee580bedb`
   )
     .then(function (response) {
       return response.json();
@@ -136,20 +186,22 @@ function fetchMe(city) {
     .then(function (response) {
       let lat = response.coord.lat;
       let lon = response.coord.lon;
-      //   console.log(`lat:${lat} lon: ${lon} `);
       return fetch(
         `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&units=imperial&exclude=hourly,minutely&appid=b25905e67fcd36d2919f537ee580bedb`
       );
     })
     .then(function (response) {
+      console.log(response);
       return response.json();
     })
     .then(function (response) {
-      console.log(response);
+      var cityData = { city: city, data: response };
+      searchedCities.push(cityData);
+
+      localStorage.setItem("cities", JSON.stringify(searchedCities));
+
       getCurrentWeatherData(city, response);
       getFutureWeatherData(response, 5);
-      saveCity(city);
-
       return response;
     })
     .catch(function () {
