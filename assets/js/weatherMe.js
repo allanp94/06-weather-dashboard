@@ -4,8 +4,8 @@ var searchCityBodyEl = $("#search-city-body");
 var searchedCityButtonDivEl = $(".searched-cities");
 
 $(document).ready(function () {
-  if (searchedCities) {
-    for (var i = 1; i < searchedCities[0].length; i++) {
+  if (searchedCities.length) {
+    for (var i = 0; i < searchedCities[0].length; i++) {
       var buttonEl = $("<button>")
         .text(searchedCities[0][i].city)
         .addClass("city button");
@@ -17,8 +17,9 @@ $(document).ready(function () {
 });
 
 searchedCityButtonDivEl.on("click", "button", function () {
-  var cityName = $(this).html();
+  var cityName = $(this).text();
   console.log(cityName);
+  checkCity(cityName, (exists = true));
 });
 
 $("#submitBtn").click(function () {
@@ -50,6 +51,7 @@ function checkCity(inputCityEl) {
         bool = true;
       }
     });
+
     if (bool) {
       getCurrentWeatherData(searchedCities[i].city, searchedCities[i].data);
       getFutureWeatherData(searchedCities[i].data, 5);
