@@ -1,13 +1,13 @@
 var savedCities = JSON.parse(localStorage.getItem("cities"));
-var searchedCities = savedCities ? [savedCities] : [];
+var searchedCities = savedCities ? savedCities : [];
 var searchCityBodyEl = $("#search-city-body");
 var searchedCityButtonDivEl = $(".searched-cities");
 
 $(document).ready(function () {
   if (searchedCities.length) {
-    for (var i = 0; i < searchedCities[0].length; i++) {
+    for (var i = 0; i < searchedCities.length; i++) {
       var buttonEl = $("<button>")
-        .text(searchedCities[0][i].city)
+        .text(searchedCities[i].city)
         .addClass("city button");
 
       searchedCityButtonDivEl.append(buttonEl);
@@ -18,31 +18,36 @@ $(document).ready(function () {
 
 searchedCityButtonDivEl.on("click", "button", function () {
   var cityName = $(this).text();
-  console.log(cityName);
-  checkCity(cityName, (exists = true));
+  checkCity(cityName);
 });
 
 $("#submitBtn").click(function () {
   var inputCityEl = $(".input-city").val();
+  $(".input-city").val("");
   if (inputCityEl !== "") {
     //check and see if that city has already been searched for
     checkCity(inputCityEl);
   }
 });
 
-function checkCity(inputCityEl) {
+function addCityButton(city) {
   $("#present-weather-info").html("");
   $("#future-weather-container").html("");
-  var buttonEl = $("<button>").text(inputCityEl).addClass("city button");
 
-  inputCityEl = inputCityEl.toLowerCase();
+  city = city.toLowerCase();
+  var buttonEl = $("<button>").text(city).addClass("city button");
+
+  searchedCityButtonDivEl.append(buttonEl);
+  searchCityBodyEl.append(searchedCityButtonDivEl);
+}
+
+function checkCity(inputCityEl) {
   var bool = false;
-  var i = 0;
+  var i = -1;
 
   if (searchedCities.length === 0) {
     fetchMe(inputCityEl);
-    searchedCityButtonDivEl.append(buttonEl);
-    searchCityBodyEl.append(searchedCityButtonDivEl);
+    addCityButton(inputCityEl);
   } else {
     searchedCities.forEach((element, index) => {
       if (inputCityEl == element.city) {
@@ -55,12 +60,9 @@ function checkCity(inputCityEl) {
     if (bool) {
       getCurrentWeatherData(searchedCities[i].city, searchedCities[i].data);
       getFutureWeatherData(searchedCities[i].data, 5);
-      bool = false;
-      i = 0;
     } else {
       fetchMe(inputCityEl);
-      searchedCityButtonDivEl.append(buttonEl);
-      searchCityBodyEl.append(searchedCityButtonDivEl);
+      addCityButton(inputCityEl);
     }
   }
 }
@@ -193,7 +195,6 @@ function fetchMe(city) {
       );
     })
     .then(function (response) {
-      console.log(response);
       return response.json();
     })
     .then(function (response) {
@@ -206,8 +207,7 @@ function fetchMe(city) {
       getFutureWeatherData(response, 5);
       return response;
     })
-    .catch(function () {
-      console.log("oops something went wrong");
+    .catch(function (error) {
       badInput(city);
     });
 }
